@@ -1,15 +1,15 @@
 import os
 import yt_dlp
 import moviepy.editor as mp
-from telegram import Update, InputMediaVideo
+from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from deep_translator import GoogleTranslator
 import razorpay
 
 # 🔑 Environment Variables (Set in Railway.app)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 RAZORPAY_KEY = os.getenv("RAZORPAY_KEY")
+RAZORPAY_SECRET = os.getenv("RAZORPAY_SECRET")
 
 # 🎬 Subscription Plans
 PLANS = {
@@ -18,7 +18,7 @@ PLANS = {
 }
 
 # 🔄 Razorpay Client
-razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY, "RAZORPAY_SECRET"))
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY, RAZORPAY_SECRET))
 
 # 🎥 Download Video Function
 def download_video(update: Update, context: CallbackContext):
@@ -37,9 +37,11 @@ def download_video(update: Update, context: CallbackContext):
         video = mp.VideoFileClip("video.mp4").subclip(0, 60)
         video.write_videofile("short_video.mp4", codec="libx264", fps=30)
 
-        # 🌍 Translate & Add Captions (Offline)
-        caption_text = "This is a sample caption"
-        translated_caption = GoogleTranslator(source="en", target="hi").translate(caption_text)
+        # 🌍 Add Captions (Offline)
+        caption_text = "This is a sample caption in English"
+        
+        # No Google Translator API, using a simple offline approach
+        translated_caption = f"📜 Caption: {caption_text} (Auto-generated)"
 
         # Send processed video
         context.bot.send_video(chat_id, video=open("short_video.mp4", "rb"), caption=translated_caption)
