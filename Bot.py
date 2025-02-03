@@ -1,8 +1,9 @@
 import os
 import yt_dlp
 import moviepy.editor as mp
-from telegram import Update
+from telegram import Update, InputMediaVideo
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from deep_translator import GoogleTranslator
 import razorpay
 
 # 🔑 Environment Variables (Set in Railway.app)
